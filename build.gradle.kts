@@ -45,3 +45,16 @@ tasks.withType<Test> {
 tasks.withType<JavaCompile> {
   options.encoding = "UTF-8"
 }
+
+tasks.create("fatJar", Jar::class) {
+  group = "build"
+  description = "Creates a self-contained fat JAR of the application that can be run."
+  duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+
+  val dependencies = configurations
+    .runtimeClasspath
+    .get()
+    .map(::zipTree)
+  from(dependencies)
+  with(tasks.jar.get())
+}
